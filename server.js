@@ -8,7 +8,12 @@ const app = express();
 // --- MONGODB ATLAS BAĞLANTI AYARI ---
 const MONGO_URI = 'MONGO_URL_BURAYA'; 
 
-mongoose.connect(MONGO_URI)
+// bufferCommands'ı kapatarak veritabanı bağlı değilse sorguların sonsuza kadar beklemesini önlüyoruz
+mongoose.set('bufferCommands', false);
+
+mongoose.connect(MONGO_URI, {
+    serverSelectionTimeoutMS: 5000 // 5 saniye içinde bağlanamazsa hata versin, siteyi kilitlemesin
+})
 .then(() => console.log('MongoDB Atlas Bağlantısı Başarılı.'))
 .catch(err => console.log('MongoDB Bağlantı Hatası:', err));
 
@@ -49,46 +54,50 @@ function isAdmin(req, res, next) {
 
 // --- ROTACILAR (ROUTES) ---
 
-// 1. Ziyaretçi Ana Sayfası (Detaylı Hata Gösterimli)
+// 1. Ziyaretçi Ana Sayfası (Veritabanı bağlantısı kopsa bile çalışan güvenli mod)
 app.get('/', async (req, res) => {
-    try {
-        const { search, category } = req.query;
-        let query = {};
+    let scripts = [];
+    let categories = [];
+    const { search, category } = req.query;
 
-        if (search) {
-            query.title = { $regex: search, $options: 'i' };
+    // Mongoose bağlantı durumunu kontrol ediyoruz (1 = Bağlı)
+    if (mongoose.connection.readyState === 1) {
+        try {
+            let query = {};
+            if (search) {
+                query.title = { $regex: search, $options: 'i' };
+            }
+            if (category) {
+                query.category = category;
+            }
+            scripts = await Script.find(query).populate('category').sort({ created_at: -1 });
+            categories = await Category.find();
+        } catch (err) {
+            console.error("Veri çekme hatası:", err);
         }
-        if (category) {
-            query.category = category;
-        }
-
-        // Eğer veritabanı bağlantısı yoksa veya sorgu başarısızsa catch bloğuna düşer
-        const scripts = await Script.find(query).populate('category').sort({ created_at: -1 });
-        const categories = await Category.find();
-
-        res.render('index', { scripts, categories, selectedCategory: category, searchQuery: search });
-    } catch (err) {
-        // "Sunucu hatası" yerine gerçek hatayı ekrana basıyoruz
-        res.status(500).send(`
-            <body style="background:#0b111e; color:#ef4444; font-family:sans-serif; padding:40px;">
-                <h2>Bağlantı veya Kod Hatası Yakalandı!</h2>
-                <p style="color:#e2e8f0; background:#1e293b; padding:20px; border-radius:8px; font-family:monospace;">
-                    ${err.message}
-                </p>
-                <p style="color:#94a3b8;">İpuçları: Şifrenizin doğruluğunu ve MongoDB Atlas panelinde Network Access kısmından IP iznini (0.0.0.0/0) verip vermediğinizi kontrol edin.</p>
-            </body>
-        `);
     }
+
+    // Veritabanı bağlı değilse veya hata varsa boş listelerle sayfayı yine de yükle (Çökme Önleyici)
+    res.render('index', { 
+        scripts, 
+        categories, 
+        selectedCategory: category, 
+        searchQuery: search,
+        dbConnected: mongoose.connection.readyState === 1 
+    });
 });
 
 // 2. Script Detay Sayfası
 app.get('/script/:id', async (req, res) => {
+    if (mongoose.connection.readyState !== 1) {
+        return res.status(503).send("Veritabanı bağlantısı şu an kurulamadı.");
+    }
     try {
         const script = await Script.findById(req.params.id).populate('category');
         if (!script) return res.redirect('/');
         res.render('script-detail', { script });
     } catch (err) {
-        res.status(500).send("Detay sayfası yüklenirken hata: " + err.message);
+        res.redirect('/');
     }
 });
 
@@ -115,12 +124,15 @@ app.post('/login', (req, res) => {
 
 // 4. Admin Yönetim Paneli
 app.get('/admin', isAdmin, async (req, res) => {
+    if (mongoose.connection.readyState !== 1) {
+        return res.status(503).send("Veritabanı bağlı olmadığından admin paneline erişilemez.");
+    }
     try {
         const categories = await Category.find();
         const scripts = await Script.find().populate('category');
         res.render('admin', { categories, scripts });
     } catch (err) {
-        res.status(500).send("Admin paneli veritabanı hatası: " + err.message);
+        res.status(500).send("Admin paneli yüklenirken hata oluştu.");
     }
 });
 
@@ -130,11 +142,11 @@ app.post('/admin/category', isAdmin, async (req, res) => {
         await Category.create({ name: req.body.name });
         res.redirect('/admin');
     } catch (err) {
-        res.send('Kategori eklenemedi (Zaten var olabilir): ' + err.message);
+        res.send('Kategori eklenemedi: ' + err.message);
     }
 });
 
-// 6. Yeni Script Ekleme API (URL Tabanlı Resim)
+// 6. Yeni Script Ekleme API
 app.post('/admin/script', isAdmin, async (req, res) => {
     try {
         await Script.create({
@@ -150,7 +162,6 @@ app.post('/admin/script', isAdmin, async (req, res) => {
     }
 });
 
-// Vercel Serverless Yapısı ve Yerel Test Ayarı
 if (process.env.NODE_ENV !== 'production') {
     app.listen(3000, () => console.log('Sunucu http://localhost:3000 adresinde aktif!'));
 }
