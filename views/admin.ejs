@@ -16,24 +16,22 @@
     <div class="container" style="max-width: 900px;">
         <h1 style="margin-bottom: 30px;">Hoş geldin, bonecan123321!</h1>
 
-        <!-- 1. Kategori Oluşturma Formu -->
         <div class="admin-form">
             <h3>1. Yeni Oyun Kategorisi Oluştur</h3>
             <br>
             <form action="/admin/category" method="POST">
                 <div class="form-group">
                     <label>Oyun Adı</label>
-                    <input type="text" name="name" placeholder="Örn: Blox Fruits, King Legacy" required>
+                    <input type="text" name="name" placeholder="Örn: Blox Fruits, Brookhaven" required>
                 </div>
                 <button type="submit" class="btn-read" style="border:none; cursor:pointer;">Kategori Ekle</button>
             </form>
         </div>
 
-        <!-- 2. Script Oluşturma Formu -->
         <div class="admin-form">
             <h3>2. Yeni Script Paylaş</h3>
             <br>
-            <form action="/admin/script" method="POST" enctype="multipart/form-data">
+            <form action="/admin/script" method="POST">
                 <div class="form-group">
                     <label>Script Başlığı</label>
                     <input type="text" name="title" placeholder="Örn: Vua Hub - Auto Farm Everything" required>
@@ -60,8 +58,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Kapak Fotoğrafı (Ekran Görüntüsü)</label>
-                    <input type="file" name="image" accept="image/*" required>
+                    <label>Kapak Fotoğrafı Linki (URL)</label>
+                    <input type="text" name="image" placeholder="https://i.hizliresim.com/xyz.png veya Discord Görsel Linki" required>
                 </div>
 
                 <button type="submit" class="btn-read" style="border:none; cursor:pointer; background:linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color:white;">Scripti Yayınla</button>
