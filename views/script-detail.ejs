@@ -30,9 +30,9 @@
         function copyCode() {
             const codeText = document.getElementById('scriptCode').innerText;
             navigator.clipboard.writeText(codeText).then(() => {
-                alert('Script panoya kopyalandı!');
+                alert('Script başarıyla kopyalandı!');
             }).catch(err => {
-                alert('Kopyalama başarısız oldu.');
+                alert('Kopyalanamadı.');
             });
         }
     </script>
