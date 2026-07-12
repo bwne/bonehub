@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kurucu Paneli | bonecan123321</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">Kurucu <span>Paneli</span></div>
+        <nav><a href="/" target="_blank">Siteyi Gör</a></nav>
+    </header>
+
+    <div class="container" style="max-width: 900px;">
+        <h1 style="margin-bottom: 30px;">Hoş geldin, bonecan123321!</h1>
+
+        <!-- 1. Kategori Oluşturma Formu -->
+        <div class="admin-form">
+            <h3>1. Yeni Oyun Kategorisi Oluştur</h3>
+            <br>
+            <form action="/admin/category" method="POST">
+                <div class="form-group">
+                    <label>Oyun Adı</label>
+                    <input type="text" name="name" placeholder="Örn: Blox Fruits, King Legacy" required>
+                </div>
+                <button type="submit" class="btn-read" style="border:none; cursor:pointer;">Kategori Ekle</button>
+            </form>
+        </div>
+
+        <!-- 2. Script Oluşturma Formu -->
+        <div class="admin-form">
+            <h3>2. Yeni Script Paylaş</h3>
+            <br>
+            <form action="/admin/script" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label>Script Başlığı</label>
+                    <input type="text" name="title" placeholder="Örn: Vua Hub - Auto Farm Everything" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Oyun Kategorisi</label>
+                    <select name="category" required>
+                        <option value="">Bir kategori seç...</option>
+                        <% categories.forEach(cat => { %>
+                            <option value="<%= cat._id %>"><%= cat.name %></option>
+                        <% }) %>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Açıklama</label>
+                    <textarea name="description" rows="3" placeholder="Script özellikleri neler?" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Lua Kodları (Script Kısmı)</label>
+                    <textarea name="code" rows="6" placeholder="loadstring(game:HttpGet(...))()" required style="font-family:monospace; color:#ff79c6;"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Kapak Fotoğrafı (Ekran Görüntüsü)</label>
+                    <input type="file" name="image" accept="image/*" required>
+                </div>
+
+                <button type="submit" class="btn-read" style="border:none; cursor:pointer; background:linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color:white;">Scripti Yayınla</button>
+            </form>
+        </div>
+
+    </div>
+
+</body>
+</html>
