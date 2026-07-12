@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= script.title %> | Bonecan Scripts</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">Bonecan <span>Scripts</span></div>
+        <nav><a href="/">&larr; Ana Sayfaya Dön</a></nav>
+    </header>
+
+    <div class="container" style="max-width: 800px;">
+        <img src="<%= script.image %>" style="width:100%; border-radius:12px; margin-bottom:20px;" alt="">
+        
+        <span style="color:#00f2fe; font-weight:bold;"><%= script.category.name %></span>
+        <h1 style="color:#fff; margin-top:5px;"><%= script.title %></h1>
+        <p style="color:#94a3b8; margin-top:15px;"><%= script.description %></p>
+
+        <h3 style="margin-top:40px; color:#fff;">Script Kodu:</h3>
+        <button class="btn-copy" onclick="copyCode()">Kodu Kopyala</button>
+        
+        <pre class="code-area"><code id="scriptCode"><%= script.code %></code></pre>
+    </div>
+
+    <script>
+        function copyCode() {
+            const codeText = document.getElementById('scriptCode').innerText;
+            navigator.clipboard.writeText(codeText).then(() => {
+                alert('Script panoya kopyalandı!');
+            }).catch(err => {
+                alert('Kopyalama başarısız oldu.');
+            });
+        }
+    </script>
+
+</body>
+</html>
