@@ -51,6 +51,16 @@ nav a:hover {
     padding: 0 20px;
 }
 
+.db-alert {
+    background-color: #7f1d1d;
+    border: 1px solid #f87171;
+    color: #fca5a5;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    font-size: 14px;
+}
+
 .search-filter-section {
     display: flex;
     gap: 15px;
