@@ -17,6 +17,13 @@
     </header>
 
     <div class="container">
+
+        <!-- Eğer veritabanı bağlantısı henüz kurulmadıysa uyarı mesajı gösterir -->
+        <% if (!dbConnected) { %>
+            <div class="db-alert">
+                <strong>Bağlantı Uyarısı:</strong> MongoDB Atlas bulut veritabanına şu an bağlanılamadı. Lütfen MongoDB Atlas panelinden <strong>Network Access</strong> alanına gidip IP iznini <code>0.0.0.0/0</code> (Her Yerden Erişim) olarak ayarladığınızdan ve <code>server.js</code> içerisindeki şifrenizin doğru olduğundan emin olun.
+            </div>
+        <% } %>
         
         <form action="/" method="GET" class="search-filter-section">
             <div class="search-box">
@@ -42,14 +49,14 @@
 
         <div class="script-grid">
             <% if(scripts.length === 0) { %>
-                <p>Aradığınız kriterlere uygun script bulunamadı.</p>
+                <p>Gösterilecek script bulunamadı.</p>
             <% } %>
 
             <% scripts.forEach(script => { %>
                 <div class="script-card">
                     <img src="<%= script.image %>" alt="<%= script.title %>" class="card-image">
                     <div class="card-content">
-                        <div class="card-category"><%= script.category.name %></div>
+                        <div class="card-category"><%= script.category ? script.category.name : 'Genel' %></div>
                         <div class="card-title"><%= script.title %></div>
                         <div class="card-desc"><%= script.description %></div>
                         <a href="/script/<%= script._id %>" class="btn-read">Devamını Oku &rarr;</a>
