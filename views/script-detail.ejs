@@ -16,7 +16,7 @@
     <div class="container" style="max-width: 800px;">
         <img src="<%= script.image %>" style="width:100%; border-radius:12px; margin-bottom:20px;" alt="">
         
-        <span style="color:#00f2fe; font-weight:bold;"><%= script.category.name %></span>
+        <span style="color:#00f2fe; font-weight:bold;"><%= script.category ? script.category.name : 'Genel' %></span>
         <h1 style="color:#fff; margin-top:5px;"><%= script.title %></h1>
         <p style="color:#94a3b8; margin-top:15px;"><%= script.description %></p>
 
