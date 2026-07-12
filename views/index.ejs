@@ -18,7 +18,6 @@
 
     <div class="container">
         
-        <!-- Arama ve Filtre Formu -->
         <form action="/" method="GET" class="search-filter-section">
             <div class="search-box">
                 <input type="text" name="search" placeholder="Script ara (Örn: Blox Fruits)..." value="<%= searchQuery || '' %>">
@@ -41,7 +40,6 @@
         <h2>Son Yüklenen Scriptler</h2>
         <br>
 
-        <!-- Script Kart Listesi -->
         <div class="script-grid">
             <% if(scripts.length === 0) { %>
                 <p>Aradığınız kriterlere uygun script bulunamadı.</p>
