@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bonecan Scripts | Roblox Arşivi</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo">Bonecan <span>Scripts</span></div>
+        <nav>
+            <a href="/">Ana Sayfa</a>
+            <a href="/admin">Yönetim Paneli</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        
+        <!-- Arama ve Filtre Formu -->
+        <form action="/" method="GET" class="search-filter-section">
+            <div class="search-box">
+                <input type="text" name="search" placeholder="Script ara (Örn: Blox Fruits)..." value="<%= searchQuery || '' %>">
+            </div>
+            
+            <select name="category" class="category-filter" onchange="this.form.submit()">
+                <option value="">Tüm Oyunlar</option>
+                <% categories.forEach(cat => { %>
+                    <option value="<%= cat._id %>" <%= selectedCategory == cat._id.toString() ? 'selected' : '' %> >
+                        <%= cat.name %>
+                    </option>
+                <% }) %>
+            </select>
+            
+            <% if(searchQuery || selectedCategory) { %>
+                <a href="/" style="padding: 15px; color: #ef4444;">Filtreleri Temizle</a>
+            <% } %>
+        </form>
+
+        <h2>Son Yüklenen Scriptler</h2>
+        <br>
+
+        <!-- Script Kart Listesi -->
+        <div class="script-grid">
+            <% if(scripts.length === 0) { %>
+                <p>Aradığınız kriterlere uygun script bulunamadı.</p>
+            <% } %>
+
+            <% scripts.forEach(script => { %>
+                <div class="script-card">
+                    <img src="<%= script.image %>" alt="<%= script.title %>" class="card-image">
+                    <div class="card-content">
+                        <div class="card-category"><%= script.category.name %></div>
+                        <div class="card-title"><%= script.title %></div>
+                        <div class="card-desc"><%= script.description %></div>
+                        <a href="/script/<%= script._id %>" class="btn-read">Devamını Oku &rarr;</a>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+
+    </div>
+
+</body>
+</html>
